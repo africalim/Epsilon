@@ -1,0 +1,69 @@
+opts:
+  backend:
+    select: native
+
+cabs:
+  greeter: 
+    info: This sends a greeting message
+    flavour: python-code
+    command : | #this vertical line lets you write multiple lines of python code
+     open (where, "wt").write(f"Hello {who}!")
+     print(f"Wrote greeting for {who} to {where}")
+    inputs:
+      who:
+        dtype: str
+        required: true #if it is required then there should not be a default
+        #default: world
+    outputs:
+      where: #output is called where
+        dtype: File
+        required: true
+
+  doubler:
+    info: doubles the content of file 'where'
+    flavour: python-code
+    inputs:
+      what:
+        dtype: File
+        required: true
+    outputs:
+      where: 
+        dtype: File
+        required: true
+    command: |
+      data = open (what).read()
+      open(where, 'wt').write(f"{data}\n{data}\n")
+      print(f"doubled up {what} to {where}")
+
+  printer: 
+    info: prints file to consol
+    inputs:
+      what:
+        dtype: File
+        required: true
+    flavour: python-code
+    command: print(open(what).read())
+
+hello: #name of recipe
+  info: this is my hello world recipe
+  inputs: #recipe inputs --> these apply to the entire recipe
+    name: 
+      dtype: str
+      default: world
+
+  steps:
+    ola:
+      cab: greeter 
+      params:
+        who: =recipe.name
+        where: greeting.txt
+    two-up:
+      cab: doubler
+      params:
+        what: =previous.where #tells stimela that the what output of the previous step is the input of this step
+        where: greeting2.txt
+    print:
+      cab: printer
+      params:
+        what: =steps.two-up.where
+    
