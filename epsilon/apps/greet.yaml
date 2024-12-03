@@ -1,0 +1,7 @@
+libs:
+  _include: (epsilon.apps)greet_cab.yaml
+
+inputs:
+  _use: libs.cabs.hello.inputs
+outputs:
+  {}

@@ -1,0 +1,15 @@
+cabs:
+  hello:
+    info: create a greeter
+    command: greet
+
+    inputs:
+      name:
+        info: name of person to greet
+        dtype: str
+        required: yes
+      surname:
+        info: surname of person
+        dtype: str
+        required: no 
+  
