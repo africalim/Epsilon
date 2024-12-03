@@ -1,0 +1,2 @@
+# RA Dec Intensity specI ref_freq
+0h0m1s 0h0m1s 3 0.7 hello

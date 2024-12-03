@@ -1,0 +1,7 @@
+libs:
+  _include: (epsilon.apps.write2model)predict_cab.yaml
+
+inputs:
+  _use: libs.cabs.predict.inputs #change
+outputs:
+  {}

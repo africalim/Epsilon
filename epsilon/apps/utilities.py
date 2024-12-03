@@ -1,0 +1,6 @@
+class CatalogueError(Exception):
+    pass
+
+
+
+

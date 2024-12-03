@@ -1,0 +1,22 @@
+cabs:
+  predict:
+    info: inputs for the predict function
+    command: predict
+
+    inputs:
+      ms:
+        info: Measurement set
+        dtype: MS
+        required: no
+        must_exist: no
+      catalogue:
+        info: catalogue of sources
+        dtype: File
+        required: yes
+      img_size:
+        info: size of image
+        dtype: int
+        required: no
+      
+    
+     
