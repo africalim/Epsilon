@@ -2,7 +2,7 @@
 name = "epsilon"
 version = "0.1.0"
 description = "Africalim project"
-authors = ["Mika Naidoo <mika.naidoo25@egmail.com>", "Coral Pillay <coralgpillay@gmail.com>"]
+authors = ["Mika Naidoo <mika.naidoo25@egmail.com>", "Coral Pillay <coralgpillay@gmail.com>", "Victoria Nakafingo <eggscellent4@yahoo.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
@@ -21,4 +21,5 @@ pytest = "^7.0"
 black = "^23.0"
 
 [tool.poetry.scripts]
-greet = "epsilon.apps.clickifyparams:runit"
+greet = "epsilon.apps.greetings.clickifyparams:runit"
+write2mod = "epsilon.apps.write2model.writetomodel:runit"
