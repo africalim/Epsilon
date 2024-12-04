@@ -1,0 +1,133 @@
+_include:
+  - (cultcargo)pfb-imaging.yml
+  #- (pfb)stimela_cabs.yml
+
+opts:
+  log:
+    dir: logs
+    nest: 2
+  backend:
+    select: singularity
+
+movie:
+  name: movie
+  info: Image a column with high time cadence and turn it into a movie 
+
+  inputs:
+    s3dir:
+      dtype: URI
+      required: true 
+      info:
+        Base S3 directory place the output in
+    efsdir:
+      dtype: str
+      default: /mnt/data/epsilon
+      info:
+        Path to the EFS volume mounted in the ocntainer.
+        This should be /mnt/data/{group_name}
+    stage:
+      dtype: str
+      required: true
+      info:
+        A descriptive string to identify the stage of processing.
+        Suggest using the Jones chain e.g. KGB
+    ms:
+      dtype: URI
+      default: s3://ratt-public-data/LBAND_LUNO_TARGET.zarr
+      info:
+        Path to MS
+    gain-table:
+      dtype: URI
+      info:
+        Path to QuartiCal gain table
+    product:
+      dtype: str
+      default: I
+      info:
+        Stokes parameter to image
+    integrations-per-image:
+      dtype: int
+      default: 4
+      info:
+        Number of time integrations per image
+    channels-per-image:
+      dtype: int
+      default: -1
+      info:
+        Number of frequency channels per image
+    data-column:
+      dtype: str
+      default: DATA
+      info:
+        Name of column to image
+    sigma-column:
+      dtype: str
+      default: SIGMA_SPECTRUM
+      info:
+        Column containing standard deviation of data
+    robustness:
+      dtype: float
+      default: -1.5
+      info:
+        Robustness value of Briggs weighting scheme
+    output-format:
+      dtype: str
+      default: zarr
+      info:
+        Output images as fits or zarr
+    field-of-view:
+      dtype: float
+      default: 1.2
+      info:
+        Field of view to image
+    super-resolution-factor:
+      dtype: float
+      default: 1.2
+      info:
+        Factor to over-sample Nyquist by
+    overwrite:
+      dtype: bool
+      default: false
+      info:
+        Allow overwriting output 
+    fps:
+      dtype: int
+      default: 8
+      info:
+        Number of frames per second
+
+  steps:
+    image:
+      cab: pfb.hci
+      info: Make high cadence images
+      params:
+        ms: =recipe.ms
+        data-column: =recipe.data-column
+        sigma-column: =recipe.sigma-column
+        gain-table: =IFSET(recipe.gain-table)
+        product: =recipe.product
+        output-format: =recipe.output-format
+        nworkers: 4
+        nthreads: 6
+        integrations-per-image: =recipe.integrations-per-image
+        channels-per-image: =recipe.channels-per-image
+        field-of-view: =recipe.field-of-view
+        super-resolution-factor: =recipe.super-resolution-factor
+        overwrite: =recipe.overwrite
+        # why is this needed?
+        output-filename: '{recipe.s3dir}/stage_{recipe.stage}'
+        fits-output-folder: '{recipe.efsdir}/stage_{recipe.stage}/fits'
+        log-directory: '{recipe.efsdir}/stage_{recipe.stage}/logs'
+    
+    animate:
+      cab: pfb.smoovie
+      info: Render images to movie
+      params:
+        product: =recipe.product
+        fps: =recipe.fps
+        nworkers: 1
+        nthreads: 1
+        out-format: mp4
+        output-filename: '{recipe.s3dir}/stage_{recipe.stage}'
+        fits-output-folder: '{recipe.efsdir}/stage_{recipe.stage}/fits'
+        log-directory: '{recipe.efsdir}/stage_{recipe.stage}/logs'
